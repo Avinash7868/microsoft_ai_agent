@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from langchain.agents import initialize_agent, AgentType
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from oneNote.oneNote_create_tools import onenote_create_tools
 from oneNote.oneNote_get_tools import onenote_get_tools
 import dotenv
@@ -17,7 +17,7 @@ if not os.getenv("GRAPH_ACCESS_TOKEN"):
 app = Flask(__name__)
 
 # Initialize LLM & tools
-llm = ChatOpenAI(temperature=0)
+llm = ChatOpenAI(model='gpt-4', temperature=0)
 tools = onenote_create_tools + onenote_get_tools  # both are lists
 
 agent = initialize_agent(

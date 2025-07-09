@@ -38,6 +38,6 @@ numpy
 
 scikit-learn
 
-langchain_community
+langchain-community
 
 flask
