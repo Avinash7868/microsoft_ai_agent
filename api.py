@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Add this import
 from langchain.agents import initialize_agent, AgentType
 from langchain_openai import ChatOpenAI
 from oneNote.oneNote_create_tools import onenote_create_tools
@@ -15,6 +16,7 @@ if not os.getenv("GRAPH_ACCESS_TOKEN"):
 
 # Flask setup
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173"])
 
 # Initialize LLM & tools
 llm = ChatOpenAI(model='gpt-4', temperature=0)
@@ -30,11 +32,16 @@ agent = initialize_agent(
 @app.route("/run-agent", methods=["POST"])
 def run_agent():
     data = request.get_json()
+    print(data, "-------------data")
     if not data or "prompt" not in data:
         return jsonify({"error": "Missing 'prompt' in request"}), 400
     try:
-        response = agent.run(data["prompt"])
-        return jsonify({"response": response})
+        verify = data['agent']
+        if verify == "Avi":
+            response = agent.run(data["prompt"])
+            return jsonify({"response": response})
+        else:
+            return "Unauthorized"
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
