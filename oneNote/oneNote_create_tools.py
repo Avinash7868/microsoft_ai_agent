@@ -1,6 +1,7 @@
 from langchain.tools import Tool
 import requests
 import os
+import time
 
 # Load token from env or secret manager
 ACCESS_TOKEN = os.getenv("GRAPH_ACCESS_TOKEN")
@@ -23,13 +24,27 @@ def create_notebook(name: str):
 # -------------------------
 # Create a new Section inside a Notebook
 # -------------------------
-def create_section(notebook_id: str, section_name: str):
+def create_section(notebook_id: str, section_name: str, retries=3, delay=2):
     url = f"https://graph.microsoft.com/v1.0/me/onenote/notebooks/{notebook_id}/sections"
     payload = {"displayName": section_name}
-    response = requests.post(url, headers=HEADERS, json=payload)
-    if response.status_code == 201:
-        return f"Section '{section_name}' created in notebook {notebook_id}."
-    return f"Failed to create section: {response.text}"
+    for attempt in range(retries):
+        response = requests.post(url, headers=HEADERS, json=payload)
+        if response.status_code == 201:
+            return f"Section '{section_name}' created in notebook {notebook_id}."
+        # If transient error, retry
+        try:
+            error_json = response.json()
+            if (
+                response.status_code == 500 or
+                error_json.get("error", {}).get("code") == "20280"
+            ):
+                if attempt < retries - 1:
+                    time.sleep(delay)
+                    continue
+        except Exception:
+            pass
+        return f"Failed to create section: {response.text}"
+    return f"Failed to create section after {retries} attempts: {response.text}"
 
 # -------------------------
 # Create a new Page inside a Section
@@ -68,6 +83,6 @@ onenote_create_tools = [
     Tool(
         name="CreatePage",
         func=lambda args: create_page(*args.split("|")),
-        description="Create a page in a section. Input should be 'section_id|page_title|page_body'."
+        description="Create a page in a section. Input should be 'section_id|page_title|page_body'. If page_title or page_body is missing, generate them yourself. If the prompt includes 'summarize' or 'detail', create the content accordingly."
     )
 ]
