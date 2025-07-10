@@ -20,7 +20,7 @@ CORS(app, origins=["http://localhost:5173"])
 
 # Initialize LLM & tools
 llm = ChatOpenAI(model='gpt-4', temperature=0)
-tools = onenote_create_tools + onenote_get_tools  # both are lists
+tools = onenote_create_tools + onenote_get_tools
 
 agent = initialize_agent(
     tools=tools,
