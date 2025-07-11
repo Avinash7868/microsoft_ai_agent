@@ -45,3 +45,5 @@ flask
 beautifulsoup4
 
 flask_cors
+
+psycopg2-binary

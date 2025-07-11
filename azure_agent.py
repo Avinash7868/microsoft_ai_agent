@@ -6,6 +6,7 @@ from langchain_openai import AzureChatOpenAI
 from oneNote.oneNote_create_tools import onenote_create_tools
 from oneNote.oneNote_get_tools import onenote_get_tools
 from ToDo.todo_get_tools import todo_get_tools
+from auth.auth import get_Token
 import dotenv
 import os
 
@@ -35,7 +36,7 @@ llm = AzureChatOpenAI(
     # max_retries=2,
     # max_tokens can be set if needed, e.g. max_tokens=2048
 )
-tools = onenote_create_tools + onenote_get_tools + todo_get_tools # both are lists
+tools = onenote_create_tools + onenote_get_tools + todo_get_tools + get_Token # both are lists
 
 agent = initialize_agent(
     tools=tools,

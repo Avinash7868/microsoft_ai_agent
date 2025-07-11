@@ -4,6 +4,7 @@ from langchain.agents import initialize_agent, AgentType
 from langchain_openai import ChatOpenAI
 from oneNote.oneNote_create_tools import onenote_create_tools
 from oneNote.oneNote_get_tools import onenote_get_tools
+from ToDo.todo_get_tools import todo_get_tools
 import dotenv
 import os
 
@@ -20,7 +21,7 @@ CORS(app, origins=["http://localhost:5173"])
 
 # Initialize LLM & tools
 llm = ChatOpenAI(model='gpt-4', temperature=0)
-tools = onenote_create_tools + onenote_get_tools
+tools = onenote_create_tools + onenote_get_tools + todo_get_tools  # both are lists
 
 agent = initialize_agent(
     tools=tools,

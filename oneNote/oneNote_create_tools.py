@@ -4,7 +4,7 @@ import os
 import time
 
 # Load token from env or secret manager
-ACCESS_TOKEN = os.getenv("GRAPH_ACCESS_TOKEN")
+ACCESS_TOKEN = requests.get('http://localhost:3000/microsoft/access-token').text
 HEADERS = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json"

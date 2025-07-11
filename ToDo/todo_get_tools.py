@@ -4,7 +4,7 @@ import os
 from bs4 import BeautifulSoup
 
 # Load token from env or secret manager
-ACCESS_TOKEN = os.getenv("GRAPH_ACCESS_TOKEN")
+ACCESS_TOKEN = requests.get('http://localhost:3000/microsoft/access-token').text
 HEADERS = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json"
@@ -32,7 +32,7 @@ todo_get_tools = [
     Tool(
         name="GetTodoLists",
         func=lambda _: get_TodoLists(),
-        description="Retrieve all todo lists for the signed-in user."
+        description="Retrieve all the names of todo lists for the signed-in user."
     ),
     Tool(
         name="GetTodoTasks",
@@ -40,5 +40,3 @@ todo_get_tools = [
         description="Retrieve all todo tasks from a specific todo list by its ID."
     )
 ]
-
-todo_get_tools
