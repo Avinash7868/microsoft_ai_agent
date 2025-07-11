@@ -27,7 +27,7 @@ CORS(app, origins=["http://localhost:5173"])
 # Initialize LLM & tools
 llm = AzureChatOpenAI(
     api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-   azure_endpoint=f"https://{os.getenv('AZURE_OPENAI_API_INSTANCE_NAME')}.openai.azure.com/",
+    azure_endpoint=f"https://{os.getenv('AZURE_OPENAI_API_INSTANCE_NAME')}.openai.azure.com/",
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
     azure_deployment=os.getenv("AZURE_OPENAI_API_DEPLOYMENT_NAME"),
     # model="gpt-35-turbo",
