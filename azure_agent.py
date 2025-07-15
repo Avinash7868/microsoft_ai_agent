@@ -7,6 +7,9 @@ from oneNote.oneNote_create_tools import onenote_create_tools
 from oneNote.oneNote_get_tools import onenote_get_tools
 from ToDo.todo_get_tools import todo_get_tools
 from auth.auth import get_Token
+from qdrant.qdrant_tools import qdrant_query_tool
+from qdrant_client.models import PointStruct
+from qdrant.main import setup_qdrant, store_embeddings
 import dotenv
 import os
 
@@ -36,7 +39,11 @@ llm = AzureChatOpenAI(
     # max_retries=2,
     # max_tokens can be set if needed, e.g. max_tokens=2048
 )
-tools = onenote_create_tools + onenote_get_tools + todo_get_tools + get_Token # both are lists
+qdrant_tool = qdrant_query_tool(collection_name="test_collection_9")
+
+# tools = onenote_create_tools + onenote_get_tools + todo_get_tools + get_Token + qdrant_tool
+tools = qdrant_tool + onenote_create_tools 
+# tools = qdrant_tool
 
 agent = initialize_agent(
     tools=tools,
@@ -59,6 +66,35 @@ def run_agent():
             return jsonify({"response": response})
         else:
             return "Unauthorized"
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/store-qdrant", methods=["POST"])
+def store_qdrant():
+    """
+    API to store JSON data in Qdrant.
+    Expects JSON with 'texts' (list of strings) and 'metadata' (list of dicts).
+    """
+    data = request.get_json()
+    if not data or "texts" not in data or "metadata" not in data:
+        return jsonify({"error": "Missing 'texts' or 'metadata' in request"}), 400
+
+    texts = data["texts"]
+    metadata = data["metadata"]
+
+    if len(texts) != len(metadata):
+        return jsonify({"error": "'texts' and 'metadata' must have the same length"}), 400
+
+    try:
+        # Ensure Qdrant collection is set up
+        collection_name = "test_collection_9"
+        vector_size = 1536  # Adjust based on your embedding model
+        # setup_qdrant(collection_name, vector_size)
+
+        # Store embeddings in Qdrant
+        store_embeddings(collection_name, texts, metadata)
+
+        return jsonify({"message": "Data successfully stored in Qdrant"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

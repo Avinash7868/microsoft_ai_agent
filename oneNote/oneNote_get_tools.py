@@ -4,7 +4,10 @@ import os
 from bs4 import BeautifulSoup
 
 # Load token from env or secret manager
-ACCESS_TOKEN = requests.get('http://localhost:3000/microsoft/access-token').text
+try:
+    ACCESS_TOKEN = requests.get('http://localhost:3000/microsoft/access-token').text
+except:
+    ACCESS_TOKEN = os.getenv("GRAPH_ACCESS_TOKEN")
 HEADERS = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json"

@@ -5,6 +5,7 @@ from langchain_openai import ChatOpenAI
 from oneNote.oneNote_create_tools import onenote_create_tools
 from oneNote.oneNote_get_tools import onenote_get_tools
 from ToDo.todo_get_tools import todo_get_tools
+from qdrant.qdrant_tools import qdrant_query_tool
 import dotenv
 import os
 
@@ -21,8 +22,10 @@ CORS(app, origins=["http://localhost:5173"])
 
 # Initialize LLM & tools
 llm = ChatOpenAI(model='gpt-4', temperature=0)
-tools = onenote_create_tools + onenote_get_tools + todo_get_tools  # both are lists
+# tools = onenote_create_tools + onenote_get_tools + todo_get_tools  # both are lists
 
+qdrant_tool = qdrant_query_tool(collection_name="test_collection_9")
+tools = qdrant_tool + onenote_create_tools 
 agent = initialize_agent(
     tools=tools,
     llm=llm,

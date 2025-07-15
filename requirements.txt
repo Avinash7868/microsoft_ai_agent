@@ -48,3 +48,5 @@ flask_cors
 
 # Qdrant Integration
 qdrant_client
+langchain-qdrant
+uuid
