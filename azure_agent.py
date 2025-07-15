@@ -10,6 +10,8 @@ from auth.auth import get_Token
 from qdrant.qdrant_tools import qdrant_query_tool
 from qdrant_client.models import PointStruct
 from qdrant.main import setup_qdrant, store_embeddings
+from oneDrive.oneDrive_create_tool import onedrive_create_tools
+from oneDrive.oneDrive_get_tool import onedrive_get_tools
 import dotenv
 import os
 
@@ -17,8 +19,8 @@ import os
 dotenv.load_dotenv()
 
 # Ensure access token
-if not os.getenv("GRAPH_ACCESS_TOKEN"):
-    raise ValueError("GRAPH_ACCESS_TOKEN not found in .env")
+# if not os.getenv("GRAPH_ACCESS_TOKEN"):
+#     raise ValueError("GRAPH_ACCESS_TOKEN not found in .env")
 
 
 if not os.getenv("AZURE_OPENAI_API_KEY") or not os.getenv('AZURE_OPENAI_API_INSTANCE_NAME') or not os.getenv("AZURE_OPENAI_API_DEPLOYMENT_NAME"):
@@ -41,7 +43,7 @@ llm = AzureChatOpenAI(
 )
 qdrant_tool = qdrant_query_tool(collection_name="test_collection_9")
 
-# tools = onenote_create_tools + onenote_get_tools + todo_get_tools + get_Token + qdrant_tool
+# tools = onenote_create_tools + onenote_get_tools + todo_get_tools + get_Token + onedrive_create_tools + onedrive_get_tools+ qdrant_tool
 tools = qdrant_tool + onenote_create_tools 
 # tools = qdrant_tool
 
@@ -62,7 +64,7 @@ def run_agent():
     try:
         verify = data['agent']
         if verify == "Avi":
-            response = agent.invoke(data["prompt"])
+            response = agent.invoke({"input": data["prompt"]})
             return jsonify({"response": response})
         else:
             return "Unauthorized"
