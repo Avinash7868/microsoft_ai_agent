@@ -44,7 +44,7 @@ def qdrant_query_tool(collection_name):
 
     return[ 
         Tool(
-        name="search and retrieve from Qdrant",
+        name="search and retrieve notebooks,sections,pages from Qdrant",
         func=query_tool,
         description="This tool searches Qdrant for the most relevant embeddings based on the input query. It prioritizes retrieving results from the vector store to provide the most contextually relevant paragraph or data for the query. Use this tool for any search-related tasks.",
         ),
